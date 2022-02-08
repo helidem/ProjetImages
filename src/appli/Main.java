@@ -7,15 +7,32 @@ import util.HistogramTools;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Test");
-        Image test = ImageLoader.exec(".../misc/images/brain.jpg");
-        double[] histo = getHisto(test);
-        HistogramTools.plotHistogram(histo);
-        // https://code-with-me.jetbrains.com/hjUhbyUuW_XSn5YctIKKRw#p=IU&fp=02C39E5AE5F1EC8F7CF7F1FC410B0974DFE3D7F33FF62AC02790F85931264ABD
+        Image test = ImageLoader.exec("misc/images/maldive.jpg");
+        proto(test);
+
     }
 
-    public void proto(Image image){
-        
+    public static void proto(Image test) throws Exception {
+        assert (test.getBDim() == 3);
+        double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test, 0)));
+        double[] histoVert = getDividedHisto(getDividedHisto(getHisto(test, 1)));
+        double[] histoBleu = getDividedHisto(getDividedHisto(getHisto(test, 2)));
+        HistogramTools.plotHistogram(histoRouge);
+        HistogramTools.plotHistogram(histoVert);
+        HistogramTools.plotHistogram(histoBleu);
+    }
+
+    /**
+     * Permet de normaliser l'histogramme
+     * @param histo
+     * @return
+     */
+    public static double[] normaliserHisto(double[] histo){
+        double[] normal = new double[histo.length];
+        for(int i =0; i< histo.length;i++){
+            normal[i] = (histo[i] * 100) / histo.length;
+        }
+        return normal;
     }
 
     /**
@@ -124,19 +141,26 @@ public class Main {
      * @param image
      * @return tableau représentant l'histogramme
      */
-    private static double[] getHisto(Image image) {
+    private static double[] getHisto(Image image, int canal) {
         double histo[] = new double[256];
         for (int i = 0; i < histo.length; i++) {
             histo[i] = 0;
         }
         for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 0; y < image.getYDim(); y++) {
-                histo[image.getPixelXYBByte(x, y, 0)] += 1;
+                histo[image.getPixelXYBByte(x, y, canal)] += 1;
             }
         }
         return histo;
     }
 
+    private static double[] getDividedHisto(double[] histo) {
+        double dividedHisto[] = new double[histo.length / 2];
+        for (int i = 0; i < dividedHisto.length - 1; i = i + 2) {
+            dividedHisto[i] = histo[i] + histo[i + 1];
+        }
+        return dividedHisto;
+    }
 }
 
 //import java.util.Scanner;
@@ -148,3 +172,4 @@ public class Main {
 //        String imagePath = scanner.nextLine();
 //        Research.signatureCalculation();
 //    }
+// c'est quoi ça ? ⏫
