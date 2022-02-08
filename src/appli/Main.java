@@ -11,6 +11,7 @@ public class Main {
         Image test = ImageLoader.exec("Z:\\JAVAIMG_S4\\images\\brain.jpg");
         double[] histo = getHisto(test);
         HistogramTools.plotHistogram(histo);
+        // https://code-with-me.jetbrains.com/hjUhbyUuW_XSn5YctIKKRw#p=IU&fp=02C39E5AE5F1EC8F7CF7F1FC410B0974DFE3D7F33FF62AC02790F85931264ABD
     }
 
     public void proto(Image image){
