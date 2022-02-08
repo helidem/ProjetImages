@@ -13,6 +13,10 @@ public class Main {
         HistogramTools.plotHistogram(histo);
     }
 
+    public void proto(Image image){
+        
+    }
+
     /**
      * Transforme l'image couleur en image noire et blanc
      *
