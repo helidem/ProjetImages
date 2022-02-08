@@ -1,5 +1,6 @@
 package appli;
 
+<<<<<<< Updated upstream
 import fr.unistra.pelican.*;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
 import util.HistogramTools;
@@ -68,6 +69,16 @@ public class Main {
             }
         }
         return img;
+=======
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String imagePath = scanner.nextLine();
+        Research.signatureCalculation();
+>>>>>>> Stashed changes
     }
 
     /**

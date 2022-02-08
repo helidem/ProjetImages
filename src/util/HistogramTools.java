@@ -2,7 +2,6 @@ package util;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
@@ -13,10 +12,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
-import fr.unistra.pelican.Image;
-import fr.unistra.pelican.algorithms.io.ImageLoader;
-import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
 
 public class HistogramTools {
 
