@@ -52,7 +52,7 @@ public class Main {
     }
 
     /**
-     *
+     * Permet d'étirer le contraste de l'image
      * @param image
      * @return
      * @throws Exception
@@ -114,6 +114,11 @@ public class Main {
         return (255 * (v-gmin) )/ (gmax-gmin);
     }
 
+    /**
+     * Permet de calculer l'histogramme de l'image
+     * @param image
+     * @return tableau représentant l'histogramme
+     */
     private static double[] getHisto(Image image){
         double histo[] = new double[256];
         for(int i = 0; i < histo.length; i++) {
@@ -127,13 +132,5 @@ public class Main {
         return histo;
     }
 
-    public static double[] getHistoCumul(Image image){
-
-    }
-
-    public static void egalHisto(Image image){
-        double[] histo = getHisto(image);
-    }
-        //
-    }
+}
 
