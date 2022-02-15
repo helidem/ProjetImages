@@ -1,8 +1,11 @@
 package appli;
 
 import fr.unistra.pelican.*;
+import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
 import util.HistogramTools;
+
+import java.awt.*;
 
 public class Main {
 
@@ -17,9 +20,9 @@ public class Main {
         double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test, 0)));
         double[] histoVert = getDividedHisto(getDividedHisto(getHisto(test, 1)));
         double[] histoBleu = getDividedHisto(getDividedHisto(getHisto(test, 2)));
-        HistogramTools.plotHistogram(histoRouge);
-        HistogramTools.plotHistogram(histoVert);
-        HistogramTools.plotHistogram(histoBleu);
+        HistogramTools.plotHistogram(histoRouge, Color.red);
+        HistogramTools.plotHistogram(histoVert, Color.green);
+        HistogramTools.plotHistogram(histoBleu, Color.blue);
     }
 
     /**

@@ -20,7 +20,7 @@ public class HistogramTools {
      * @param histogram tableau représsentant l'histogramme
      * @throws IOException
      */
-    public static void plotHistogram(double [] histogram) throws IOException{
+    public static void plotHistogram(double [] histogram, Color couleur) throws IOException{
 
         XYSeries myseries = new XYSeries("Nombre de pixels");
         for(int i=0;i<histogram.length;i++){
@@ -33,7 +33,8 @@ public class HistogramTools {
         XYPlot xyplot = jfreechart.getXYPlot();
 
         xyplot.setBackgroundPaint(Color.lightGray);
-        xyplot.setRangeGridlinePaint(Color.white);
+        xyplot.setRangeGridlinePaint(Color.black);
+        xyplot.getRendererForDataset(xyplot.getDataset(0)).setSeriesPaint(0,couleur);
         NumberAxis axis = (NumberAxis) xyplot.getDomainAxis();
 
         axis.setLowerMargin(0);
@@ -64,6 +65,7 @@ public class HistogramTools {
 
         xyplot.setBackgroundPaint(Color.lightGray);
         xyplot.setRangeGridlinePaint(Color.white);
+
         NumberAxis axis = (NumberAxis) xyplot.getDomainAxis();
 
         axis.setLowerMargin(0);
