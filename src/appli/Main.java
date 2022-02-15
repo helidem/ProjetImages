@@ -3,7 +3,9 @@ package appli;
 import fr.unistra.pelican.*;
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
+import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
 import util.HistogramTools;
+import util.JSONProduction;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -13,27 +15,39 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Image test = ImageLoader.exec("misc/images/maldive.jpg");
         proto(test);
-
+        JSONProduction.indexation("misc/images");
+        Image med = median(test);
+        med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
+        Viewer2D.exec(med);
     }
 
+    /**
+     * Affiche les histogrammes de l'image
+     *
+     * @param test l'image test
+     * @throws Exception
+     */
     public static void proto(Image test) throws Exception {
         assert (test.getBDim() == 3);
-        double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test, 0)));
-        double[] histoVert = getDividedHisto(getDividedHisto(getHisto(test, 1)));
-        double[] histoBleu = getDividedHisto(getDividedHisto(getHisto(test, 2)));
+        double[][] array = getHisto(test);
+
+        /*double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test)));
+        double[][] histoVert = getDividedHisto(getDividedHisto(getHisto(test)));
+        double[][] histoBleu = getDividedHisto(getDividedHisto(getHisto(test)));
         HistogramTools.plotHistogram(histoRouge, Color.red);
         HistogramTools.plotHistogram(histoVert, Color.green);
-        HistogramTools.plotHistogram(histoBleu, Color.blue);
+        HistogramTools.plotHistogram(histoBleu, Color.blue);*/
     }
 
     /**
      * Permet de normaliser l'histogramme
+     *
      * @param histo
      * @return
      */
-    public static double[] normaliserHisto(double[] histo){
+    public static double[] normaliserHisto(double[] histo) {
         double[] normal = new double[histo.length];
-        for(int i =0; i< histo.length;i++){
+        for (int i = 0; i < histo.length; i++) {
             normal[i] = (histo[i] * 100) / histo.length;
         }
         return normal;
@@ -110,7 +124,6 @@ public class Main {
             }
         }
         return min;
-
     }
 
     /**
@@ -120,7 +133,6 @@ public class Main {
      * @return la valeur max
      */
     public static int max(Image image) {
-
         int max = image.getPixelXYBByte(0, 0, 0);
         for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 1; y <= image.getYDim(); y++) {
@@ -130,7 +142,6 @@ public class Main {
             }
         }
         return max;
-
     }
 
     private static int f(int v, int gmin, int gmax) {
@@ -143,14 +154,19 @@ public class Main {
      * @param image
      * @return tableau représentant l'histogramme
      */
-    private static double[] getHisto(Image image, int canal) {
-        double histo[] = new double[256];
+    public static double[][] getHisto(Image image) {
+        double histo[][] = new double[256][3];
         for (int i = 0; i < histo.length; i++) {
-            histo[i] = 0;
+            histo[i][0] = 0;
+            histo[i][1] = 0;
+            histo[i][2] = 0;
         }
         for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 0; y < image.getYDim(); y++) {
-                histo[image.getPixelXYBByte(x, y, canal)] += 1;
+                histo[image.getPixelXYBByte(x, y, 0)][0] += 1;
+                histo[image.getPixelXYBByte(x, y, 1)][1] += 1;
+                histo[image.getPixelXYBByte(x, y, 2)][2] += 1;
+
             }
         }
         return histo;
@@ -158,19 +174,23 @@ public class Main {
 
     /**
      * Divise l'histogramme
-     * @param histo l'histogramme à modifuier
+     *
+     * @param histo l'histogramme à modifier
      * @return
      */
-    private static double[] getDividedHisto(double[] histo) {
-        double dividedHisto[] = new double[histo.length / 2];
+    private static double[][] getDividedHisto(double[][] histo) {
+        double dividedHisto[][] = new double[histo.length / 2][3];
         for (int i = 0; i < dividedHisto.length - 1; i = i + 2) {
-            dividedHisto[i] = histo[i] + histo[i + 1];
+            dividedHisto[i][0] = histo[i][0] + histo[i + 1][0];
+            dividedHisto[i][1] = histo[i][1] + histo[i + 1][1];
+            dividedHisto[i][2] = histo[i][2] + histo[i + 1][2];
         }
         return dividedHisto;
     }
 
     /**
      * Cette fonction applique le filtre moyenneur sur l'image
+     *
      * @param image l'image bruitée à traiter
      * @return l'image traitée
      */
@@ -205,16 +225,16 @@ public class Main {
 
     /**
      * Applique le filtre médian sur une image
+     *
      * @param image l'image à transformer
      * @return l'image transformée
      */
     public static Image median(Image image) {
-        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-
+        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 3);
         for (int x = 1; x < image.getXDim() - 1; x++) {
             for (int y = 1; y < image.getYDim() - 1; y++) {
                 // calcul de la mediane
-                int[] arr = { // TODO : A CHANGER URGENT
+                int[] arr0 = { // TODO : A CHANGER URGENT
                         image.getPixelXYBByte(x, y, 0),
                         image.getPixelXYBByte(x + 1, y + 1, 0),
                         image.getPixelXYBByte(x - 1, y - 1, 0),
@@ -223,12 +243,36 @@ public class Main {
                         image.getPixelXYBByte(x - 1, y + 1, 0),
                         image.getPixelXYBByte(x + 1, y - 1, 0),
                         image.getPixelXYBByte(x, y + 1, 0),
-                        image.getPixelXYBByte(x + 1, y, 0)
-                };
-                System.out.println(arr);
-                Arrays.sort(arr);
-                int mediane = arr[arr.length / 2];
-                new_image.setPixelXYBByte(x, y, 0, mediane);
+                        image.getPixelXYBByte(x + 1, y, 0)};
+                int[] arr1 = {
+                        image.getPixelXYBByte(x, y, 1),
+                        image.getPixelXYBByte(x + 1, y + 1, 1),
+                        image.getPixelXYBByte(x - 1, y - 1, 1),
+                        image.getPixelXYBByte(x - 1, y, 1),
+                        image.getPixelXYBByte(x, y - 1, 1),
+                        image.getPixelXYBByte(x - 1, y + 1, 1),
+                        image.getPixelXYBByte(x + 1, y - 1, 1),
+                        image.getPixelXYBByte(x, y + 1, 1),
+                        image.getPixelXYBByte(x + 1, y, 1)};
+                int[] arr2 = {
+                        image.getPixelXYBByte(x, y, 2),
+                        image.getPixelXYBByte(x + 1, y + 1, 2),
+                        image.getPixelXYBByte(x - 1, y - 1, 2),
+                        image.getPixelXYBByte(x - 1, y, 2),
+                        image.getPixelXYBByte(x, y - 1, 2),
+                        image.getPixelXYBByte(x - 1, y + 1, 2),
+                        image.getPixelXYBByte(x + 1, y - 1, 2),
+                        image.getPixelXYBByte(x, y + 1, 2),
+                        image.getPixelXYBByte(x + 1, y, 2)};
+                Arrays.sort(arr0);
+                Arrays.sort(arr1);
+                Arrays.sort(arr2);
+                int mediane1 = arr0[arr0.length / 2];
+                int mediane2 = arr1[arr1.length / 2];
+                int mediane3 = arr2[arr2.length / 2];
+                new_image.setPixelXYBByte(x, y, 0, mediane1);
+                new_image.setPixelXYBByte(x, y, 1, mediane2);
+                new_image.setPixelXYBByte(x, y, 2, mediane3);
             } // y for
         } // x for
         return new_image;
@@ -236,19 +280,17 @@ public class Main {
 
     public static Image contours(Image image) {
         ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-
-
         for (int x = 1; x < image.getXDim() - 1; x++) {
             for (int y = 1; y < image.getYDim() - 1; y++) {
                 new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y, 0) * -2);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y + 1, 0)*0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y - 1, 0)*0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y, 0)*1);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y - 1, 0)*1);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y + 1, 0)*0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y - 1, 0)*0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y + 1, 0)*0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y + 1, 0) * 0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y - 1, 0) * 0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y, 0) * 1);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y - 1, 0) * 1);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y + 1, 0) * 0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y - 1, 0) * 0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y + 1, 0) * 0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y, 0) * 0);
             } // y for
         } // x for
 
