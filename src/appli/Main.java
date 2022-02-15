@@ -6,6 +6,7 @@ import fr.unistra.pelican.algorithms.io.ImageLoader;
 import util.HistogramTools;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Main {
 
@@ -98,7 +99,6 @@ public class Main {
      *
      * @param image l'image
      * @return la valeur min
-     * @throws Exception
      */
     public static int min(Image image) {
 
@@ -118,7 +118,6 @@ public class Main {
      *
      * @param image l'image
      * @return la valeur max
-     * @throws Exception
      */
     public static int max(Image image) {
 
@@ -157,6 +156,11 @@ public class Main {
         return histo;
     }
 
+    /**
+     * Divise l'histogramme
+     * @param histo l'histogramme à modifuier
+     * @return
+     */
     private static double[] getDividedHisto(double[] histo) {
         double dividedHisto[] = new double[histo.length / 2];
         for (int i = 0; i < dividedHisto.length - 1; i = i + 2) {
@@ -164,17 +168,90 @@ public class Main {
         }
         return dividedHisto;
     }
+
+    /**
+     * Cette fonction applique le filtre moyenneur sur l'image
+     * @param image l'image bruitée à traiter
+     * @return l'image traitée
+     */
+    public static Image moyenneur(Image image) {
+        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
+        for (int x = 1; x < image.getXDim() - 1; x++) {
+            for (int y = 1; y < image.getYDim() - 1; y++) {
+                // calcul de la moyenne
+                int moyenne = 0;/* = ( // TODO : A CHANGER URGENT
+                        image.getPixelXYBByte(x,y,0) +
+                        image.getPixelXYBByte(x+1,y+1,0) +
+                        image.getPixelXYBByte(x-1,y-1,0) +
+                        image.getPixelXYBByte(x-1,y,0) +
+                        image.getPixelXYBByte(x,y-1,0) +
+                        image.getPixelXYBByte(x-1,y+1,0) +
+                        image.getPixelXYBByte(x+1,y-1,0) +
+                        image.getPixelXYBByte(x,y+1,0) +
+                        image.getPixelXYBByte(x+1,y,0))/9;*/
+                for (int xx = -1; xx <= 1; xx++) {
+                    for (int yy = -1; yy <= 1; yy++) {
+                        moyenne += image.getPixelXYBByte(x + xx, y + yy, 0);
+                    }
+                }
+                moyenne /= 9;
+                // attribue le pixel dans la nouvelle image
+                new_image.setPixelXYBByte(x, y, 0, moyenne);
+            } // y for
+        } // x for
+        return new_image;
+    } // moyenneur
+
+
+    /**
+     * Applique le filtre médian sur une image
+     * @param image l'image à transformer
+     * @return l'image transformée
+     */
+    public static Image median(Image image) {
+        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
+
+        for (int x = 1; x < image.getXDim() - 1; x++) {
+            for (int y = 1; y < image.getYDim() - 1; y++) {
+                // calcul de la mediane
+                int[] arr = { // TODO : A CHANGER URGENT
+                        image.getPixelXYBByte(x, y, 0),
+                        image.getPixelXYBByte(x + 1, y + 1, 0),
+                        image.getPixelXYBByte(x - 1, y - 1, 0),
+                        image.getPixelXYBByte(x - 1, y, 0),
+                        image.getPixelXYBByte(x, y - 1, 0),
+                        image.getPixelXYBByte(x - 1, y + 1, 0),
+                        image.getPixelXYBByte(x + 1, y - 1, 0),
+                        image.getPixelXYBByte(x, y + 1, 0),
+                        image.getPixelXYBByte(x + 1, y, 0)
+                };
+                System.out.println(arr);
+                Arrays.sort(arr);
+                int mediane = arr[arr.length / 2];
+                new_image.setPixelXYBByte(x, y, 0, mediane);
+            } // y for
+        } // x for
+        return new_image;
+    } // median
+
+    public static Image contours(Image image) {
+        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
+
+
+        for (int x = 1; x < image.getXDim() - 1; x++) {
+            for (int y = 1; y < image.getYDim() - 1; y++) {
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y, 0) * -2);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y + 1, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y - 1, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y, 0)*1);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y - 1, 0)*1);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y + 1, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y - 1, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y + 1, 0)*0);
+                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y, 0)*0);
+            } // y for
+        } // x for
+
+        return new_image;
+    }
 }
-
-//import java.util.Scanner;
-//
-//public class Main {
-//
-//    public static void main(String[] args) {
-//        Scanner scanner = new Scanner(System.in);
-//        String imagePath = scanner.nextLine();
-//        Research.signatureCalculation();
-//    }
-// c'est quoi ça ? ⏫
-
-//https://code-with-me.jetbrains.com/ypeM7IzyPePy7WqVT8OTBg#p=IC&fp=04EE5398A499F974BC7C8B80749668028A96B7005333FA85B1A67BF41EF8AAF1
