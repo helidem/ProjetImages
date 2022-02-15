@@ -29,7 +29,7 @@ public class Main {
      */
     public static void proto(Image test) throws Exception {
         assert (test.getBDim() == 3);
-        double[][] array = getHisto(test);
+        double[] array = getHisto(test, 2);
 
         /*double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test)));
         double[][] histoVert = getDividedHisto(getDividedHisto(getHisto(test)));
@@ -154,23 +154,31 @@ public class Main {
      * @param image
      * @return tableau représentant l'histogramme
      */
-    public static double[][] getHisto(Image image) {
-        double histo[][] = new double[256][3];
+    public static double[] getHisto(Image image, int canal) {
+        double histo[] = new double[256];
         for (int i = 0; i < histo.length; i++) {
-            histo[i][0] = 0;
-            histo[i][1] = 0;
-            histo[i][2] = 0;
+            histo[i] = 0;
         }
         for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 0; y < image.getYDim(); y++) {
-                histo[image.getPixelXYBByte(x, y, 0)][0] += 1;
-                histo[image.getPixelXYBByte(x, y, 1)][1] += 1;
-                histo[image.getPixelXYBByte(x, y, 2)][2] += 1;
-
+                histo[image.getPixelXYBByte(x, y, canal)] += 1;
             }
         }
         return histo;
     }
+
+
+    public static String histoToString(double[] histo){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (double val:
+             histo) {
+            sb.append(val).append(",");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
 
     /**
      * Divise l'histogramme

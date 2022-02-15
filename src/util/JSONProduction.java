@@ -22,16 +22,17 @@ public class JSONProduction {
         File[] directoryListing = dir.listFiles();
 
         if (directoryListing != null) {
-            Files.delete(FileSystems.getDefault().getPath("misc/out.json"));
+            if(Files.exists(FileSystems.getDefault().getPath("misc/out.json"))) {
+                Files.delete(FileSystems.getDefault().getPath("misc/out.json"));
+            }
             FileWriter file = null;
             file = new FileWriter("misc/out.json");
             JSONArray jsonArray = new JSONArray();
             for (File image : directoryListing) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("nom", image.getName());
-                System.out.println(Main.getHisto(ImageLoader.exec(image.getPath())));
-                System.out.println("AAAAAAAAAAAAAAAA");
-                jsonObject.put("histogram", Main.getHisto(ImageLoader.exec(image.getPath()))); // TODO: calculer l'histogramme de l'image
+                double[] histogram = Main.getHisto(ImageLoader.exec(image.getPath()), 0);
+                jsonObject.put("histogram", Main.histoToString(histogram)); // TODO: calculer l'histogramme de l'image
                 jsonArray.add(jsonObject);
             }
 
