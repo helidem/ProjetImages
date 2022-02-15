@@ -173,3 +173,5 @@ public class Main {
 //        Research.signatureCalculation();
 //    }
 // c'est quoi ça ? ⏫
+
+//https://code-with-me.jetbrains.com/ypeM7IzyPePy7WqVT8OTBg#p=IC&fp=04EE5398A499F974BC7C8B80749668028A96B7005333FA85B1A67BF41EF8AAF1
