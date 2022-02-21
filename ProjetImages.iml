@@ -7,11 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/bridj-0.6.2.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/bridj-0.6.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -20,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/jai_codec.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/jai_codec.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -29,7 +28,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/jai_core.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/jai_core.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -38,7 +37,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/jai_imageio.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/jai_imageio.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -47,7 +46,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/java-sdk-6.2.0-jar-with-dependencies.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/java-sdk-6.2.0-jar-with-dependencies.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -56,7 +55,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/jcommon-1.0.23.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/jcommon-1.0.23.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -65,7 +64,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/jfreechart-1.0.19.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/jfreechart-1.0.19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -74,18 +73,18 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/pelican.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/pelican.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/Downloads/lib/pelican.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/pelican.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/slf4j-api-1.7.25.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/slf4j-api-1.7.25.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -94,7 +93,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/slf4j-simple-1.7.25.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/slf4j-simple-1.7.25.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -103,12 +102,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lib/webcam-capture-0.3.10.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/Compressed/lib/webcam-capture-0.3.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="json-simple-1.1" level="project" />
   </component>
 </module>
