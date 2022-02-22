@@ -3,17 +3,29 @@ package appli;
 import fr.unistra.pelican.*;
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
+import util.HistogramTools;
 import util.JSONProduction;
 
+import java.awt.*;
 import java.util.Arrays;
+
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("misc/images/maldive.jpg");
+        PictureIUT test = new PictureIUT("misc/images/test.png");
+        PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
+        PictureIUT test3= new PictureIUT("misc/images/brain.jpg");
         proto(test);
-        JSONProduction.indexation("misc/images");
+        proto(test2);
+        proto(test3);
+        JSONProduction.jsonEncode("misc/images");
+        //JSONProduction.jsonDecode("misc/images");
         Image med = median(test.getImg());
+        double dist = distance(test, test3);
+        System.out.println("Distance : " + dist);
         med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
         Viewer2D.exec(med);
     }
@@ -24,20 +36,29 @@ public class Main {
      * @throws Exception
      */
     public static void proto(PictureIUT test) throws Exception {
-
+        test.initHisto();
+        double [] histo = normaliserHisto(test.getRouge());
+        HistogramTools.plotHistogram(histo, Color.RED);
     }
 
     /**
      * Permet de normaliser l'histogramme
-     *
      * @param histo
      * @return
      */
     public static double[] normaliserHisto(double[] histo) {
         double[] normal = new double[histo.length];
-        for (int i = 0; i < histo.length; i++) {
-            normal[i] = (histo[i] * 100) / histo.length;
+        int nbPixel = 0;
+        double pourcent = 0;
+        for(double num : histo){
+            nbPixel += num;
         }
+        //System.out.println(nbPixel);
+        for (int i = 0; i < histo.length; i++) {
+            normal[i] = (histo[i] * 100) / nbPixel;
+            pourcent += normal[i];
+        }
+        //System.out.println(pourcent);
         return normal;
     }
 
@@ -78,7 +99,6 @@ public class Main {
 
     /**
      * Permet d'étirer le contraste de l'image
-     *
      * @param image
      * @return
      * @throws Exception
@@ -98,7 +118,6 @@ public class Main {
 
     /**
      * Retourne la valeur min de l'image
-     *
      * @param image l'image
      * @return la valeur min
      */
@@ -116,7 +135,6 @@ public class Main {
 
     /**
      * Retourne la valeur max de l'image
-     *
      * @param image l'image
      * @return la valeur max
      */
@@ -153,7 +171,6 @@ public class Main {
         return histo;
     }
 
-
     /**
      * Converti l'histogramme en chaine de caractères
      * @param histo
@@ -169,7 +186,6 @@ public class Main {
         sb.append("]");
         return sb.toString();
     }
-
 
     /**
      * Divise l'histogramme
@@ -209,7 +225,6 @@ public class Main {
         } // x for
         return new_image;
     } // moyenneur
-
 
     /**
      * Applique le filtre médian sur une image
@@ -265,7 +280,6 @@ public class Main {
         return new_image;
     } // median
 
-
     public static Image contours(Image image) {
         ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
         for (int x = 1; x < image.getXDim() - 1; x++) {
@@ -282,5 +296,27 @@ public class Main {
             } // y for
         } // x for
         return new_image;
+    }
+
+
+    public static double distance(PictureIUT p1, PictureIUT p2){
+        double somme0 = 0;
+        double somme1 = 0;
+        double somme2 = 0;
+        if(p1.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2){
+            // distance 1
+            for(int i = 0; i < p1.getRouge().length; i++){
+                somme1 += pow(p1.getVert()[i] - p2.getVert()[i], 2);
+            }
+            // distance 2
+            for(int i = 0; i < p1.getRouge().length; i++){
+                somme2 += pow(p1.getBleu()[i] - p2.getBleu()[i], 2);
+            }
+        }
+        // distance 0
+        for(int i = 0; i < p1.getRouge().length; i++){
+            somme0 += pow(p1.getRouge()[i] - p2.getRouge()[i], 2);
+        }
+        return Math.sqrt(somme0) + Math.sqrt(somme1) + Math.sqrt(somme2);
     }
 }

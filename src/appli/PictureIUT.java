@@ -31,11 +31,11 @@ public class PictureIUT {
      * Calcule l'histogramme de l'image
      */
     public void initHisto() {
-        if (img.getBDim() > 1) {
-            Main.getHisto(this.img, 1);
-            Main.getHisto(this.img, 2);
+        if (img.getBDim() > 2) {
+            vert = Main.getHisto(this.img, 1);
+            bleu = Main.getHisto(this.img, 2);
         }
-            Main.getHisto(this.img, 0);
+            rouge = Main.getHisto(this.img, 0);
     }
 
     public Image getImg() {
