@@ -2,41 +2,29 @@ package appli;
 
 import fr.unistra.pelican.*;
 import fr.unistra.pelican.Image;
-import fr.unistra.pelican.algorithms.io.ImageLoader;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
-import util.HistogramTools;
 import util.JSONProduction;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Image test = ImageLoader.exec("misc/images/maldive.jpg");
+        PictureIUT test = new PictureIUT("misc/images/maldive.jpg");
         proto(test);
         JSONProduction.indexation("misc/images");
-        Image med = median(test);
+        Image med = median(test.getImg());
         med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
         Viewer2D.exec(med);
     }
 
     /**
      * Affiche les histogrammes de l'image
-     *
      * @param test l'image test
      * @throws Exception
      */
-    public static void proto(Image test) throws Exception {
-        assert (test.getBDim() == 3);
-        double[] array = getHisto(test, 2);
+    public static void proto(PictureIUT test) throws Exception {
 
-        /*double[] histoRouge = getDividedHisto(getDividedHisto(getHisto(test)));
-        double[][] histoVert = getDividedHisto(getDividedHisto(getHisto(test)));
-        double[][] histoBleu = getDividedHisto(getDividedHisto(getHisto(test)));
-        HistogramTools.plotHistogram(histoRouge, Color.red);
-        HistogramTools.plotHistogram(histoVert, Color.green);
-        HistogramTools.plotHistogram(histoBleu, Color.blue);*/
     }
 
     /**
@@ -150,16 +138,14 @@ public class Main {
 
     /**
      * Permet de calculer l'histogramme de l'image
-     *
      * @param image
      * @return tableau représentant l'histogramme
      */
     public static double[] getHisto(Image image, int canal) {
         double histo[] = new double[256];
-        for (int i = 0; i < histo.length; i++) {
-            histo[i] = 0;
-        }
-        for (int x = 0; x < image.getXDim(); x++) {
+       Arrays.fill(histo,0.0);
+
+       for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 0; y < image.getYDim(); y++) {
                 histo[image.getPixelXYBByte(x, y, canal)] += 1;
             }
@@ -168,6 +154,11 @@ public class Main {
     }
 
 
+    /**
+     * Converti l'histogramme en chaine de caractères
+     * @param histo
+     * @return
+     */
     public static String histoToString(double[] histo){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
@@ -182,7 +173,6 @@ public class Main {
 
     /**
      * Divise l'histogramme
-     *
      * @param histo l'histogramme à modifier
      * @return
      */
@@ -198,7 +188,6 @@ public class Main {
 
     /**
      * Cette fonction applique le filtre moyenneur sur l'image
-     *
      * @param image l'image bruitée à traiter
      * @return l'image traitée
      */
@@ -207,16 +196,7 @@ public class Main {
         for (int x = 1; x < image.getXDim() - 1; x++) {
             for (int y = 1; y < image.getYDim() - 1; y++) {
                 // calcul de la moyenne
-                int moyenne = 0;/* = ( // TODO : A CHANGER URGENT
-                        image.getPixelXYBByte(x,y,0) +
-                        image.getPixelXYBByte(x+1,y+1,0) +
-                        image.getPixelXYBByte(x-1,y-1,0) +
-                        image.getPixelXYBByte(x-1,y,0) +
-                        image.getPixelXYBByte(x,y-1,0) +
-                        image.getPixelXYBByte(x-1,y+1,0) +
-                        image.getPixelXYBByte(x+1,y-1,0) +
-                        image.getPixelXYBByte(x,y+1,0) +
-                        image.getPixelXYBByte(x+1,y,0))/9;*/
+                int moyenne = 0;
                 for (int xx = -1; xx <= 1; xx++) {
                     for (int yy = -1; yy <= 1; yy++) {
                         moyenne += image.getPixelXYBByte(x + xx, y + yy, 0);
@@ -233,7 +213,6 @@ public class Main {
 
     /**
      * Applique le filtre médian sur une image
-     *
      * @param image l'image à transformer
      * @return l'image transformée
      */
@@ -286,6 +265,7 @@ public class Main {
         return new_image;
     } // median
 
+
     public static Image contours(Image image) {
         ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
         for (int x = 1; x < image.getXDim() - 1; x++) {
@@ -301,7 +281,6 @@ public class Main {
                 new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y, 0) * 0);
             } // y for
         } // x for
-
         return new_image;
     }
 }
