@@ -1,7 +1,6 @@
 package appli;
 
 import fr.unistra.pelican.*;
-import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
 import util.HistogramTools;
 import util.JSONProduction;
@@ -10,14 +9,13 @@ import java.awt.*;
 import java.util.Arrays;
 
 import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
         PictureIUT test = new PictureIUT("misc/images/test.png");
         PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
-        PictureIUT test3= new PictureIUT("misc/images/brain.jpg");
+        PictureIUT test3 = new PictureIUT("misc/images/brain.jpg");
         proto(test);
         proto(test2);
         proto(test3);
@@ -32,17 +30,19 @@ public class Main {
 
     /**
      * Affiche les histogrammes de l'image
+     *
      * @param test l'image test
      * @throws Exception
      */
     public static void proto(PictureIUT test) throws Exception {
         test.initHisto();
-        double [] histo = normaliserHisto(test.getRouge());
+        double[] histo = normaliserHisto(test.getRouge());
         HistogramTools.plotHistogram(histo, Color.RED);
     }
 
     /**
      * Permet de normaliser l'histogramme
+     *
      * @param histo
      * @return
      */
@@ -50,7 +50,7 @@ public class Main {
         double[] normal = new double[histo.length];
         int nbPixel = 0;
         double pourcent = 0;
-        for(double num : histo){
+        for (double num : histo) {
             nbPixel += num;
         }
         //System.out.println(nbPixel);
@@ -99,6 +99,7 @@ public class Main {
 
     /**
      * Permet d'étirer le contraste de l'image
+     *
      * @param image
      * @return
      * @throws Exception
@@ -118,6 +119,7 @@ public class Main {
 
     /**
      * Retourne la valeur min de l'image
+     *
      * @param image l'image
      * @return la valeur min
      */
@@ -135,6 +137,7 @@ public class Main {
 
     /**
      * Retourne la valeur max de l'image
+     *
      * @param image l'image
      * @return la valeur max
      */
@@ -156,14 +159,15 @@ public class Main {
 
     /**
      * Permet de calculer l'histogramme de l'image
+     *
      * @param image
      * @return tableau représentant l'histogramme
      */
     public static double[] getHisto(Image image, int canal) {
         double histo[] = new double[256];
-       Arrays.fill(histo,0.0);
+        Arrays.fill(histo, 0.0);
 
-       for (int x = 0; x < image.getXDim(); x++) {
+        for (int x = 0; x < image.getXDim(); x++) {
             for (int y = 0; y < image.getYDim(); y++) {
                 histo[image.getPixelXYBByte(x, y, canal)] += 1;
             }
@@ -173,14 +177,15 @@ public class Main {
 
     /**
      * Converti l'histogramme en chaine de caractères
+     *
      * @param histo
      * @return
      */
-    public static String histoToString(double[] histo){
+    public static String histoToString(double[] histo) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for (double val:
-             histo) {
+        for (double val :
+                histo) {
             sb.append(val).append(",");
         }
         sb.append("]");
@@ -189,21 +194,21 @@ public class Main {
 
     /**
      * Divise l'histogramme
+     *
      * @param histo l'histogramme à modifier
      * @return
      */
-    private static double[][] getDividedHisto(double[][] histo) {
-        double dividedHisto[][] = new double[histo.length / 2][3];
+    private static double[] getDividedHisto(double[] histo) {
+        double dividedHisto[] = new double[histo.length / 2];
         for (int i = 0; i < dividedHisto.length - 1; i = i + 2) {
-            dividedHisto[i][0] = histo[i][0] + histo[i + 1][0];
-            dividedHisto[i][1] = histo[i][1] + histo[i + 1][1];
-            dividedHisto[i][2] = histo[i][2] + histo[i + 1][2];
+            dividedHisto[i] = histo[i] + histo[i + 1];
         }
         return dividedHisto;
     }
 
     /**
      * Cette fonction applique le filtre moyenneur sur l'image
+     *
      * @param image l'image bruitée à traiter
      * @return l'image traitée
      */
@@ -228,6 +233,7 @@ public class Main {
 
     /**
      * Applique le filtre médian sur une image
+     *
      * @param image l'image à transformer
      * @return l'image transformée
      */
@@ -299,22 +305,22 @@ public class Main {
     }
 
 
-    public static double distance(PictureIUT p1, PictureIUT p2){
+    public static double distance(PictureIUT p1, PictureIUT p2) {
         double somme0 = 0;
         double somme1 = 0;
         double somme2 = 0;
-        if(p1.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2){
+        if (p1.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2) {
             // distance 1
-            for(int i = 0; i < p1.getRouge().length; i++){
+            for (int i = 0; i < p1.getRouge().length; i++) {
                 somme1 += pow(p1.getVert()[i] - p2.getVert()[i], 2);
             }
             // distance 2
-            for(int i = 0; i < p1.getRouge().length; i++){
+            for (int i = 0; i < p1.getRouge().length; i++) {
                 somme2 += pow(p1.getBleu()[i] - p2.getBleu()[i], 2);
             }
         }
         // distance 0
-        for(int i = 0; i < p1.getRouge().length; i++){
+        for (int i = 0; i < p1.getRouge().length; i++) {
             somme0 += pow(p1.getRouge()[i] - p2.getRouge()[i], 2);
         }
         return Math.sqrt(somme0) + Math.sqrt(somme1) + Math.sqrt(somme2);
