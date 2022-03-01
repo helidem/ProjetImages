@@ -1,6 +1,8 @@
 package appli;
 
 import fr.unistra.pelican.*;
+import fr.unistra.pelican.Image;
+import fr.unistra.pelican.algorithms.io.ImageLoader;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
 import util.HistogramTools;
 import util.JSONProduction;
@@ -13,7 +15,7 @@ import static java.lang.Math.pow;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("misc/images/test.png");
+        /*PictureIUT test = new PictureIUT("misc/images/test.png");
         PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
         PictureIUT test3 = new PictureIUT("misc/images/brain.jpg");
         proto(test);
@@ -24,6 +26,10 @@ public class Main {
         Image med = median(test.getImg());
         double dist = distance(test, test3);
         System.out.println("Distance : " + dist);
+        med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
+        Viewer2D.exec(med);*/
+        Image test = ImageLoader.exec("C:\\Users\\youce\\Documents\\ProjetImages\\misc\\images\\lenaB.png");
+        Image med = median(test);
         med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
         Viewer2D.exec(med);
     }
@@ -238,52 +244,81 @@ public class Main {
      * @return l'image transformée
      */
     public static Image median(Image image) {
-        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 3);
-        for (int x = 1; x < image.getXDim() - 1; x++) {
-            for (int y = 1; y < image.getYDim() - 1; y++) {
-                // calcul de la mediane
-                int[] arr0 = { // TODO : A CHANGER URGENT
-                        image.getPixelXYBByte(x, y, 0),
-                        image.getPixelXYBByte(x + 1, y + 1, 0),
-                        image.getPixelXYBByte(x - 1, y - 1, 0),
-                        image.getPixelXYBByte(x - 1, y, 0),
-                        image.getPixelXYBByte(x, y - 1, 0),
-                        image.getPixelXYBByte(x - 1, y + 1, 0),
-                        image.getPixelXYBByte(x + 1, y - 1, 0),
-                        image.getPixelXYBByte(x, y + 1, 0),
-                        image.getPixelXYBByte(x + 1, y, 0)};
-                int[] arr1 = {
-                        image.getPixelXYBByte(x, y, 1),
-                        image.getPixelXYBByte(x + 1, y + 1, 1),
-                        image.getPixelXYBByte(x - 1, y - 1, 1),
-                        image.getPixelXYBByte(x - 1, y, 1),
-                        image.getPixelXYBByte(x, y - 1, 1),
-                        image.getPixelXYBByte(x - 1, y + 1, 1),
-                        image.getPixelXYBByte(x + 1, y - 1, 1),
-                        image.getPixelXYBByte(x, y + 1, 1),
-                        image.getPixelXYBByte(x + 1, y, 1)};
-                int[] arr2 = {
-                        image.getPixelXYBByte(x, y, 2),
-                        image.getPixelXYBByte(x + 1, y + 1, 2),
-                        image.getPixelXYBByte(x - 1, y - 1, 2),
-                        image.getPixelXYBByte(x - 1, y, 2),
-                        image.getPixelXYBByte(x, y - 1, 2),
-                        image.getPixelXYBByte(x - 1, y + 1, 2),
-                        image.getPixelXYBByte(x + 1, y - 1, 2),
-                        image.getPixelXYBByte(x, y + 1, 2),
-                        image.getPixelXYBByte(x + 1, y, 2)};
-                Arrays.sort(arr0);
-                Arrays.sort(arr1);
-                Arrays.sort(arr2);
-                int mediane1 = arr0[arr0.length / 2];
-                int mediane2 = arr1[arr1.length / 2];
-                int mediane3 = arr2[arr2.length / 2];
-                new_image.setPixelXYBByte(x, y, 0, mediane1);
-                new_image.setPixelXYBByte(x, y, 1, mediane2);
-                new_image.setPixelXYBByte(x, y, 2, mediane3);
-            } // y for
-        } // x for
-        return new_image;
+        if(image.getBDim() > 2){
+            System.out.println("COULEUR");
+            ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 3);
+            System.out.println(image.getXDim() * image.getYDim());
+            for (int x = 1; x < image.getXDim() - 1; x++) {
+                for (int y = 1; y < image.getYDim() - 1; y++) {
+                    // calcul de la mediane
+                    int[] arr0 = { // TODO : A CHANGER URGENT
+                            image.getPixelXYBByte(x, y, 0),
+                            image.getPixelXYBByte(x + 1, y + 1, 0),
+                            image.getPixelXYBByte(x - 1, y - 1, 0),
+                            image.getPixelXYBByte(x - 1, y, 0),
+                            image.getPixelXYBByte(x, y - 1, 0),
+                            image.getPixelXYBByte(x - 1, y + 1, 0),
+                            image.getPixelXYBByte(x + 1, y - 1, 0),
+                            image.getPixelXYBByte(x, y + 1, 0),
+                            image.getPixelXYBByte(x + 1, y, 0)};
+                    int[] arr1 = {
+                            image.getPixelXYBByte(x, y, 1),
+                            image.getPixelXYBByte(x + 1, y + 1, 1),
+                            image.getPixelXYBByte(x - 1, y - 1, 1),
+                            image.getPixelXYBByte(x - 1, y, 1),
+                            image.getPixelXYBByte(x, y - 1, 1),
+                            image.getPixelXYBByte(x - 1, y + 1, 1),
+                            image.getPixelXYBByte(x + 1, y - 1, 1),
+                            image.getPixelXYBByte(x, y + 1, 1),
+                            image.getPixelXYBByte(x + 1, y, 1)};
+                    int[] arr2 = {
+                            image.getPixelXYBByte(x, y, 2),
+                            image.getPixelXYBByte(x + 1, y + 1, 2),
+                            image.getPixelXYBByte(x - 1, y - 1, 2),
+                            image.getPixelXYBByte(x - 1, y, 2),
+                            image.getPixelXYBByte(x, y - 1, 2),
+                            image.getPixelXYBByte(x - 1, y + 1, 2),
+                            image.getPixelXYBByte(x + 1, y - 1, 2),
+                            image.getPixelXYBByte(x, y + 1, 2),
+                            image.getPixelXYBByte(x + 1, y, 2)};
+                    Arrays.sort(arr0);
+                    Arrays.sort(arr1);
+                    Arrays.sort(arr2);
+                    int mediane1 = arr0[arr0.length / 2];
+                    int mediane2 = arr1[arr1.length / 2];
+                    int mediane3 = arr2[arr2.length / 2];
+                    new_image.setPixelXYBByte(x, y, 0, mediane1);
+                    new_image.setPixelXYBByte(x, y, 1, mediane2);
+                    new_image.setPixelXYBByte(x, y, 2, mediane3);
+                } // y for
+            } // x for
+            return new_image;
+        } else {
+            System.out.println("NOIR");
+            ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
+            System.out.println(image.getXDim() * image.getYDim());
+            for (int x = 1; x < image.getXDim() - 1; x++) {
+                for (int y = 1; y < image.getYDim() - 1; y++) {
+                    // calcul de la mediane
+                    int[] arr0 = { // TODO : A CHANGER URGENT
+                            image.getPixelXYBByte(x, y, 0),
+                            image.getPixelXYBByte(x + 1, y + 1, 0),
+                            image.getPixelXYBByte(x - 1, y - 1, 0),
+                            image.getPixelXYBByte(x - 1, y, 0),
+                            image.getPixelXYBByte(x, y - 1, 0),
+                            image.getPixelXYBByte(x - 1, y + 1, 0),
+                            image.getPixelXYBByte(x + 1, y - 1, 0),
+                            image.getPixelXYBByte(x, y + 1, 0),
+                            image.getPixelXYBByte(x + 1, y, 0)};
+                    Arrays.sort(arr0);
+                    int mediane1 = arr0[arr0.length / 2];
+                    new_image.setPixelXYBByte(x, y, 0, mediane1);
+
+                } // y for
+            } // x for
+            return new_image;
+        }
+
     } // median
 
     public static Image contours(Image image) {

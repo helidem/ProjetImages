@@ -3,10 +3,10 @@ package util;
 import appli.Main;
 import appli.PictureIUT;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
-import org.json.simple.JSONArray;
+/*import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.simple.parser.ParseException;*/
 
 import java.io.*;
 import java.nio.file.*;
@@ -17,7 +17,7 @@ public class JSONProduction {
 
     /**
      * Permet d'indexer les fichiers images et créer le fichier json
-     */
+     *//*
     public static void jsonEncode(String imageBankPath) throws IOException {
         File dir = new File(imageBankPath);
         File[] directoryListing = dir.listFiles();
@@ -41,7 +41,7 @@ public class JSONProduction {
             file.write(jsonArray.toJSONString());
             file.close();
         }
-    }
+    }*/
 /*
     public static PictureIUT jsonDecode(String imageBankPath, int i) throws IOException {
         JSONParser parser = new JSONParser();
