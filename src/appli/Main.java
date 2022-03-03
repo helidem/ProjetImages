@@ -8,15 +8,19 @@ import util.HistogramTools;
 import util.JSONProduction;
 
 import java.awt.*;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.lang.Math.pow;
 
 public class Main {
+    public static TreeMap<Double, String> imageMap = new TreeMap();
 
     public static void main(String[] args) throws Exception {
-        /*PictureIUT test = new PictureIUT("misc/images/test.png");
-        PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
+        /*PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
         PictureIUT test3 = new PictureIUT("misc/images/brain.jpg");
         proto(test);
         proto(test2);
@@ -28,11 +32,64 @@ public class Main {
         System.out.println("Distance : " + dist);
         med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
         Viewer2D.exec(med);*/
-        Image test = ImageLoader.exec("C:\\Users\\youce\\Documents\\ProjetImages\\misc\\images\\lenaB.png");
+        /*Image test = ImageLoader.exec("misc\\images\\lenaB.png");
+
         Image med = median(test);
         med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
-        Viewer2D.exec(med);
+        Viewer2D.exec(med);*/
+        PictureIUT test = new PictureIUT("096.jpg", "misc\\motos\\096.jpg");
+        //Image cont = contours(test.getImg());
+        //cont.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
+        //Viewer2D.exec(cont);
+        //JSONProduction.jsonEncode("misc/images");
+        /*test.setRouge(normaliserHisto(test.getRouge()));
+        test.setBleu(normaliserHisto(test.getBleu()));
+        test.setVert(normaliserHisto(test.getVert()));*/
+        // test = traiterImage(test);
+        // proto(test);
+        recherche(test);
+        System.out.println(imageMap);
+        int cpt = 0;
+        for(Map.Entry<Double, String> entry : imageMap.entrySet()) {
+            if(cpt == 10){
+                break;
+            }
+            Image image = ImageLoader.exec("misc/motos/"+entry.getValue());
+            image.setColor(true);
+            Viewer2D.exec(image);
+            cpt++;
+        }
     }
+
+    public static PictureIUT traiterImage(PictureIUT image){
+        if(image.getImg().getBDim() > 2){
+            image.setBleu(normaliserHisto(image.getBleu()));
+            image.setVert(normaliserHisto(image.getVert()));
+            image.setBleu(getDividedHisto(image.getBleu()));
+            image.setVert(getDividedHisto(image.getVert()));
+        }
+        image.setRouge(normaliserHisto(image.getRouge()));
+        image.setRouge(getDividedHisto(image.getRouge()));
+        image.setImg(median(image.getImg()));
+        return image;
+    }
+
+    public static void recherche(PictureIUT req) {
+        req = traiterImage(req);
+        File dir = new File("misc\\motos");
+        File[] directoryListing = dir.listFiles();
+        for (File image : directoryListing) {
+            /*if (image.getName().equals(req.getName())) {
+                continue;
+            }*/
+            // .out.println("je teste : " + image.getName());
+            PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
+            image2 = traiterImage(image2);
+            double distance = distance(req, image2);
+            imageMap.put(distance, image.getName());
+        }
+    }
+
 
     /**
      * Affiche les histogrammes de l'image
@@ -41,14 +98,13 @@ public class Main {
      * @throws Exception
      */
     public static void proto(PictureIUT test) throws Exception {
-        test.initHisto();
-        double[] histo = normaliserHisto(test.getRouge());
-        HistogramTools.plotHistogram(histo, Color.RED);
+        HistogramTools.plotHistogram(test.getRouge(), Color.RED);
+        HistogramTools.plotHistogram(test.getBleu(), Color.BLUE);
+        HistogramTools.plotHistogram(test.getVert(), Color.GREEN);
     }
 
     /**
-     * Permet de normaliser l'histogramme
-     *
+     * Permet de normaliser l'histogramme (pourcentage)
      * @param histo
      * @return
      */
@@ -84,11 +140,6 @@ public class Main {
         return imageGris;
     }
 
-    /**
-     * @param image
-     * @param s
-     * @return
-     */
     public static Image binarisation(Image image, int s) {
         ByteImage bin = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
         for (int x = 0; x < image.getXDim(); x++) {
@@ -107,7 +158,7 @@ public class Main {
      * Permet d'étirer le contraste de l'image
      *
      * @param image
-     * @return
+     * @return l'image traitée
      * @throws Exception
      */
     public static Image etirementContraste(Image image) throws Exception {
@@ -244,10 +295,10 @@ public class Main {
      * @return l'image transformée
      */
     public static Image median(Image image) {
-        if(image.getBDim() > 2){
-            System.out.println("COULEUR");
+        if (image.getBDim() > 2) {
+           //  System.out.println("COULEUR");
             ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 3);
-            System.out.println(image.getXDim() * image.getYDim());
+           //  System.out.println(image.getXDim() * image.getYDim());
             for (int x = 1; x < image.getXDim() - 1; x++) {
                 for (int y = 1; y < image.getYDim() - 1; y++) {
                     // calcul de la mediane
@@ -318,7 +369,6 @@ public class Main {
             } // x for
             return new_image;
         }
-
     } // median
 
     public static Image contours(Image image) {
@@ -340,24 +390,36 @@ public class Main {
     }
 
 
-    public static double distance(PictureIUT p1, PictureIUT p2) {
-        double somme0 = 0;
-        double somme1 = 0;
-        double somme2 = 0;
-        if (p1.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2) {
+    /**
+     * Calcule la distance des histogrammes entre l'image req et p2
+     *
+     * @param req l'image en entrée
+     * @param p2  l'image avec laquelle on compare
+     * @return la distance des histogrammes
+     */
+    public static double distance(PictureIUT req, PictureIUT p2) {
+        double rouge = 0;
+        double vert = 0;
+        double bleu = 0;
+        if (req.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2) {
             // distance 1
-            for (int i = 0; i < p1.getRouge().length; i++) {
-                somme1 += pow(p1.getVert()[i] - p2.getVert()[i], 2);
-            }
+            for (int i = 0; i < req.getVert().length; i++) {
+                vert += pow(req.getVert()[i] - p2.getVert()[i], 2);
+
+            }//System.out.println("vert : " + vert);
             // distance 2
-            for (int i = 0; i < p1.getRouge().length; i++) {
-                somme2 += pow(p1.getBleu()[i] - p2.getBleu()[i], 2);
-            }
+            for (int i = 0; i < req.getBleu().length; i++) {
+                bleu += pow(req.getBleu()[i] - p2.getBleu()[i], 2);
+
+            }//System.out.println("bleu : " + bleu);
         }
         // distance 0
-        for (int i = 0; i < p1.getRouge().length; i++) {
-            somme0 += pow(p1.getRouge()[i] - p2.getRouge()[i], 2);
+        for (int i = 0; i < req.getRouge().length; i++) {
+            rouge += pow(req.getRouge()[i] - p2.getRouge()[i], 2);
+            //System.out.println("barre n° : "+i+" & req : "+req.getRouge()[i] + " && p2 : " + p2.getRouge()[i]);
         }
-        return Math.sqrt(somme0) + Math.sqrt(somme1) + Math.sqrt(somme2);
+        //System.out.println("rouge : " + rouge);
+        //System.out.println(Math.sqrt(rouge));
+        return Math.sqrt(rouge) + Math.sqrt(vert) + Math.sqrt(bleu);
     }
 }
