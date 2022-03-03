@@ -11,10 +11,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JSONProduction {
@@ -41,7 +41,7 @@ public class JSONProduction {
                 double[] histogram1 = Main.getHisto(pic, 0);
                 histogram1 = Main.normaliserHisto(histogram1);
                 jsonObject.put("histogram1", Main.histoToString(histogram1));
-                if(pic.getBDim() > 2){ // si l'image est en couleur
+                if (pic.getBDim() > 2) { // si l'image est en couleur
                     double[] histogram2 = Main.getHisto(pic, 1);
                     double[] histogram3 = Main.getHisto(pic, 2);
                     histogram2 = Main.normaliserHisto(histogram2);
@@ -58,6 +58,7 @@ public class JSONProduction {
 
     /**
      * Permet de créer une image à partir des données dans le fichier json
+     *
      * @param jsonPath
      * @return l'image
      * @throws IOException
@@ -75,15 +76,36 @@ public class JSONProduction {
         for (Object object : array) {
             JSONObject jsonObject = (JSONObject) object;
             PictureIUT pictureIUT = new PictureIUT((String) jsonObject.get("nom"), "misc/images/" + (String) jsonObject.get("nom"));
-            jsonObject.get("histogram1");
-            /*pictureIUT.setRouge((double[]) histogram1.get(1));
-            if (jsonObject.containsKey("histogram3")) {
-                pictureIUT.setBleu((double[]) jsonObject.get("histogram3"));
-                pictureIUT.setVert((double[]) jsonObject.get("histogram2"));
+            String[] separatedDoublesHisto1 = jsonObject.get("histogram1").toString().substring(1, jsonObject.get("histogram1").toString().length() - 1).split(",");
+            int cpt1 = 0;
+            double[] histogram1 = new double[256];
+            for (String s : separatedDoublesHisto1) {
+                histogram1[cpt1] = Double.parseDouble(s);
+                cpt1++;
             }
-            listOfPictureIUT.add(pictureIUT);*/
+            pictureIUT.setRouge(histogram1);
+            // si l'image est en couleur :
+            if (jsonObject.containsKey("histogram3")) {
+                String[] separatedDoublesHisto2 = jsonObject.get("histogram2").toString().substring(1, jsonObject.get("histogram2").toString().length() - 1).split(",");
+                int cpt2 = 0;
+                double[] histogram2 = new double[256];
+                for (String s : separatedDoublesHisto2) {
+                    histogram2[cpt2] = Double.parseDouble(s);
+                    cpt2++;
+                }
+
+                String[] separatedDoublesHisto3 = jsonObject.get("histogram3").toString().substring(1, jsonObject.get("histogram3").toString().length() - 1).split(",");
+                int cpt3 = 0;
+                double[] histogram3 = new double[256];
+                for (String s : separatedDoublesHisto3) {
+                    histogram2[cpt3] = Double.parseDouble(s);
+                    cpt3++;
+                }
+                pictureIUT.setBleu(histogram3);
+                pictureIUT.setVert(histogram2);
+            }
+            listOfPictureIUT.add(pictureIUT);
         }
-        System.out.println(listOfPictureIUT);
         return listOfPictureIUT;
     }
 }

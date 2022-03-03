@@ -20,35 +20,14 @@ public class Main {
     public static TreeMap<Double, String> imageMap = new TreeMap();
 
     public static void main(String[] args) throws Exception {
-        /*PictureIUT test2 = new PictureIUT("misc/images/test - Copie.png");
-        PictureIUT test3 = new PictureIUT("misc/images/brain.jpg");
-        proto(test);
-        proto(test2);
-        proto(test3);
-        JSONProduction.jsonEncode("misc/images");
-        //JSONProduction.jsonDecode("misc/images");
-        Image med = median(test.getImg());
-        double dist = distance(test, test3);
-        System.out.println("Distance : " + dist);
-        med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
-        Viewer2D.exec(med);*/
-        /*Image test = ImageLoader.exec("misc\\images\\lenaB.png");
+        PictureIUT test = new PictureIUT("099.jpg", "misc\\motos\\099.jpg");
+        // recherche(test);
+       //  System.out.println(imageMap);
+        // afficherImages();
+        System.out.println(JSONProduction.jsonDecode("misc/out.json"));
+    }
 
-        Image med = median(test);
-        med.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
-        Viewer2D.exec(med);*/
-        PictureIUT test = new PictureIUT("096.jpg", "misc\\motos\\096.jpg");
-        //Image cont = contours(test.getImg());
-        //cont.setColor(true); //si false => affichage de chaque canal, si true => affichage d'une image couleur
-        //Viewer2D.exec(cont);
-        //JSONProduction.jsonEncode("misc/images");
-        /*test.setRouge(normaliserHisto(test.getRouge()));
-        test.setBleu(normaliserHisto(test.getBleu()));
-        test.setVert(normaliserHisto(test.getVert()));*/
-        // test = traiterImage(test);
-        // proto(test);
-        recherche(test);
-        System.out.println(imageMap);
+    private static void afficherImages() {
         int cpt = 0;
         for(Map.Entry<Double, String> entry : imageMap.entrySet()) {
             if(cpt == 10){
