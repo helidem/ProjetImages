@@ -9,8 +9,8 @@ import util.JSONProduction;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,28 +20,31 @@ public class Main {
     public static TreeMap<Double, String> imageMap = new TreeMap();
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("099.jpg", "misc\\motos\\099.jpg");
-        // recherche(test);
-       //  System.out.println(imageMap);
-        // afficherImages();
-        System.out.println(JSONProduction.jsonDecode("misc/out.json"));
+        PictureIUT test = new PictureIUT("000.jpg", "misc\\motos\\000.jpg");
+        // JSONProduction.jsonEncode("misc/motos");
+        // ArrayList<PictureIUT> motos = JSONProduction.jsonDecode("misc/out.json");
+        //recherche(test,motos);
+        recherche(test);
+        //afficherImages();
+        //System.out.println(imageMap);
     }
 
     private static void afficherImages() {
         int cpt = 0;
-        for(Map.Entry<Double, String> entry : imageMap.entrySet()) {
-            if(cpt == 10){
+        for (Map.Entry<Double, String> entry : imageMap.entrySet()) {
+            if (cpt == 10) {
                 break;
             }
-            Image image = ImageLoader.exec("misc/motos/"+entry.getValue());
+            Image image = ImageLoader.exec("misc/motos/" + entry.getValue());
             image.setColor(true);
             Viewer2D.exec(image);
             cpt++;
         }
     }
 
-    public static PictureIUT traiterImage(PictureIUT image){
-        if(image.getImg().getBDim() > 2){
+    public static PictureIUT traiterImage(PictureIUT image) {
+        image.setImg(median(image.getImg()));
+        if (image.getImg().getBDim() > 2) {
             image.setBleu(normaliserHisto(image.getBleu()));
             image.setVert(normaliserHisto(image.getVert()));
             image.setBleu(getDividedHisto(image.getBleu()));
@@ -49,12 +52,18 @@ public class Main {
         }
         image.setRouge(normaliserHisto(image.getRouge()));
         image.setRouge(getDividedHisto(image.getRouge()));
-        image.setImg(median(image.getImg()));
+
         return image;
     }
 
+    /**
+     * Recherche les images similaires dans le dossier de l'image
+     *
+     * @param req l'image en question
+     */
     public static void recherche(PictureIUT req) {
         req = traiterImage(req);
+        System.out.println( Arrays.toString(req.getRouge()));
         File dir = new File("misc\\motos");
         File[] directoryListing = dir.listFiles();
         for (File image : directoryListing) {
@@ -69,6 +78,15 @@ public class Main {
         }
     }
 
+    public static void recherche(PictureIUT req, ArrayList<PictureIUT> images) {
+        req = traiterImage(req);
+
+        for (PictureIUT image : images) {
+            PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
+            double distance = distance(req, image2);
+            imageMap.put(distance, image.getName());
+        }
+    }
 
     /**
      * Affiche les histogrammes de l'image
@@ -84,6 +102,7 @@ public class Main {
 
     /**
      * Permet de normaliser l'histogramme (pourcentage)
+     *
      * @param histo
      * @return
      */
@@ -234,10 +253,13 @@ public class Main {
      * @param histo l'histogramme à modifier
      * @return
      */
-    private static double[] getDividedHisto(double[] histo) {
-        double dividedHisto[] = new double[histo.length / 2];
-        for (int i = 0; i < dividedHisto.length - 1; i = i + 2) {
-            dividedHisto[i] = histo[i] + histo[i + 1];
+    public static double[] getDividedHisto(double[] histo) {
+        double dividedHisto[] = new double[histo.length / 10];
+        for (int i = 0; i < dividedHisto.length - 1; i = i + 10) {
+            // dividedHisto[i] = histo[i] + histo[i + 1];
+            for (int j = 0; j < 10; j++) {
+                dividedHisto[i] += histo[i + j];
+            }
         }
         return dividedHisto;
     }
@@ -275,9 +297,9 @@ public class Main {
      */
     public static Image median(Image image) {
         if (image.getBDim() > 2) {
-           //  System.out.println("COULEUR");
+            //  System.out.println("COULEUR");
             ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 3);
-           //  System.out.println(image.getXDim() * image.getYDim());
+            //  System.out.println(image.getXDim() * image.getYDim());
             for (int x = 1; x < image.getXDim() - 1; x++) {
                 for (int y = 1; y < image.getYDim() - 1; y++) {
                     // calcul de la mediane
@@ -381,24 +403,16 @@ public class Main {
         double vert = 0;
         double bleu = 0;
         if (req.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2) {
-            // distance 1
             for (int i = 0; i < req.getVert().length; i++) {
                 vert += pow(req.getVert()[i] - p2.getVert()[i], 2);
-
-            }//System.out.println("vert : " + vert);
-            // distance 2
+            }
             for (int i = 0; i < req.getBleu().length; i++) {
                 bleu += pow(req.getBleu()[i] - p2.getBleu()[i], 2);
-
-            }//System.out.println("bleu : " + bleu);
+            }
         }
-        // distance 0
         for (int i = 0; i < req.getRouge().length; i++) {
             rouge += pow(req.getRouge()[i] - p2.getRouge()[i], 2);
-            //System.out.println("barre n° : "+i+" & req : "+req.getRouge()[i] + " && p2 : " + p2.getRouge()[i]);
         }
-        //System.out.println("rouge : " + rouge);
-        //System.out.println(Math.sqrt(rouge));
         return Math.sqrt(rouge) + Math.sqrt(vert) + Math.sqrt(bleu);
     }
 }
