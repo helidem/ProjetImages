@@ -19,21 +19,19 @@ public class Main {
     public static TreeMap<Double, String> imageMap = new TreeMap();
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("034.jpg", "misc\\motos\\034.jpg");
-        // JSONProduction.jsonEncodeHSV("misc/motos");
-        ArrayList<PictureIUT> motos = JSONProduction.jsonDecodeHSV("misc/outHSV.json");
+        PictureIUT test = new PictureIUT("042.jpg", "misc\\motos\\042.jpg");
+       // JSONProduction.jsonEncodeRGB("misc/motos");
+         ArrayList<PictureIUT> motos = JSONProduction.jsonDecodeRGB("misc/out.json");
        /* System.out.println(Arrays.toString(motos.get(0).getRouge()));
         System.out.println(Arrays.toString(motos.get(0).getBleu()));
         System.out.println(Arrays.toString(motos.get(0).getVert()));*/
         recherche(test, motos);
         // recherche(test);
-         afficherImages();
+        afficherImages();
         System.out.println(imageMap);
         // System.out.println(Arrays.toString(test.getS()));
 
         //System.out.println(distance(traiterImage(test),motos.get(0)));
-
-
 
 
     }
@@ -46,7 +44,7 @@ public class Main {
             }
             Image image = ImageLoader.exec("misc/motos/" + entry.getValue());
             image.setColor(true);
-            Viewer2D.exec(image,image.getName());
+            Viewer2D.exec(image, image.getName());
             cpt++;
         }
     }
@@ -64,6 +62,7 @@ public class Main {
 
         return image;
     }
+
 
     /**
      * Recherche les images similaires dans le dossier de l'image
@@ -91,9 +90,9 @@ public class Main {
     }
 
     public static void recherche(PictureIUT req, ArrayList<PictureIUT> images) {
-       // req = traiterImage(req);
+        req = traiterImage(req);
 
-        System.out.println("req : "+Arrays.toString(req.getRouge()));
+        System.out.println("req : " + Arrays.toString(req.getRouge()));
         for (PictureIUT image : images) {
             double distance = distance(req, image);
             imageMap.put(distance, image.getName());
@@ -118,7 +117,6 @@ public class Main {
             normal[i] = (histo[i] * 100) / nbPixel;
             pourcent += normal[i];
         }
-
         return normal;
     }
 
@@ -141,7 +139,7 @@ public class Main {
     }
 
     public static double[] getDividedHisto(double[] h) {
-        int nbBarres = h.length / 8;
+        int nbBarres = h.length / 10;
         double[] histo = new double[nbBarres];
 
         for (int x = 0; x < histo.length; x++) {

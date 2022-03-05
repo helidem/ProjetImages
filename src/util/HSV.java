@@ -1,13 +1,14 @@
 package util;
 
+import appli.Main;
 import appli.PictureIUT;
 import fr.unistra.pelican.Image;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import static appli.Main.imageMap;
-import static appli.Main.traiterImage;
+import static appli.Main.*;
 import static java.lang.Math.pow;
 
 public class HSV {
@@ -119,4 +120,15 @@ public class HSV {
             imageMap.put(distance, image.getName());
         }
     }
+
+    public static void rechercheHSV(PictureIUT req, ArrayList<PictureIUT> images) {
+
+        System.out.println("req : " + Arrays.toString(req.getRouge()));
+        for (PictureIUT image : images) {
+            double distance = distance(req, image);
+            imageMap.put(distance, image.getName());
+        }
+    }
+
+
 }
