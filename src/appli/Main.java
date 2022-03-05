@@ -4,8 +4,7 @@ import fr.unistra.pelican.*;
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
-import util.HistogramTools;
-import util.JSONProduction;
+import util.*;
 
 import java.awt.*;
 import java.io.File;
@@ -20,13 +19,22 @@ public class Main {
     public static TreeMap<Double, String> imageMap = new TreeMap();
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("000.jpg", "misc\\motos\\000.jpg");
+        // PictureIUT test = new PictureIUT("000.jpg", "misc\\motos\\000.jpg");
         // JSONProduction.jsonEncode("misc/motos");
         // ArrayList<PictureIUT> motos = JSONProduction.jsonDecode("misc/out.json");
-        //recherche(test,motos);
-        recherche(test);
-        //afficherImages();
-        //System.out.println(imageMap);
+        // recherche(test, motos);
+        // recherche(test);
+        // afficherImages();
+        // System.out.println(imageMap)
+        // System.out.println( Arrays.toString(HSV.rgb_to_hsv(52,11,44)));
+
+
+        PictureIUT test = new PictureIUT("215.jpg", "misc/motos/215.jpg");
+        HSV.recherche(test);
+        System.out.println(imageMap);
+        afficherImages();
+
+        HistogramTools.plotHistogram(test.getH(), Color.BLUE);
     }
 
     private static void afficherImages() {
@@ -43,15 +51,15 @@ public class Main {
     }
 
     public static PictureIUT traiterImage(PictureIUT image) {
-        image.setImg(median(image.getImg()));
+        //image.setImg(median(image.getImg()));
         if (image.getImg().getBDim() > 2) {
             image.setBleu(normaliserHisto(image.getBleu()));
             image.setVert(normaliserHisto(image.getVert()));
-            image.setBleu(getDividedHisto(image.getBleu()));
-            image.setVert(getDividedHisto(image.getVert()));
+            // image.setBleu(getDividedHisto(image.getBleu()));
+            //  image.setVert(getDividedHisto(image.getVert()));
         }
         image.setRouge(normaliserHisto(image.getRouge()));
-        image.setRouge(getDividedHisto(image.getRouge()));
+        //   image.setRouge(getDividedHisto(image.getRouge()));
 
         return image;
     }
@@ -63,7 +71,6 @@ public class Main {
      */
     public static void recherche(PictureIUT req) {
         req = traiterImage(req);
-        System.out.println( Arrays.toString(req.getRouge()));
         File dir = new File("misc\\motos");
         File[] directoryListing = dir.listFiles();
         for (File image : directoryListing) {
@@ -80,24 +87,10 @@ public class Main {
 
     public static void recherche(PictureIUT req, ArrayList<PictureIUT> images) {
         req = traiterImage(req);
-
         for (PictureIUT image : images) {
-            PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
-            double distance = distance(req, image2);
+            double distance = distance(req, image);
             imageMap.put(distance, image.getName());
         }
-    }
-
-    /**
-     * Affiche les histogrammes de l'image
-     *
-     * @param test l'image test
-     * @throws Exception
-     */
-    public static void proto(PictureIUT test) throws Exception {
-        HistogramTools.plotHistogram(test.getRouge(), Color.RED);
-        HistogramTools.plotHistogram(test.getBleu(), Color.BLUE);
-        HistogramTools.plotHistogram(test.getVert(), Color.GREEN);
     }
 
     /**
@@ -123,96 +116,6 @@ public class Main {
     }
 
     /**
-     * Transforme l'image couleur en image noire et blanc
-     *
-     * @param imageCouleur l'image en couleur
-     * @return l'image transformée
-     */
-    public static Image colorToGray(Image imageCouleur) {
-        ByteImage imageGris = new ByteImage(imageCouleur.getXDim(), imageCouleur.getYDim(), 1, 1, 1);
-        for (int x = 0; x < imageCouleur.getXDim(); x++) {
-            for (int y = 0; y < imageCouleur.getYDim(); y++) {
-                imageGris.setPixelXYBByte(x, y, 0, (imageCouleur.getPixelXYBByte(x, y, 0) + imageCouleur.getPixelXYBByte(x, y, 1) + imageCouleur.getPixelXYBByte(x, y, 2)) / 3);
-            }
-        }
-        return imageGris;
-    }
-
-    public static Image binarisation(Image image, int s) {
-        ByteImage bin = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-        for (int x = 0; x < image.getXDim(); x++) {
-            for (int y = 0; y < image.getYDim(); y++) {
-                if (image.getPixelXYBByte(x, y, 0) <= s) {
-                    bin.setPixelXYBByte(x, y, 0, 0);
-                } else {
-                    bin.setPixelXYBByte(x, y, 0, 255);
-                }
-            }
-        }
-        return bin;
-    }
-
-    /**
-     * Permet d'étirer le contraste de l'image
-     *
-     * @param image
-     * @return l'image traitée
-     * @throws Exception
-     */
-    public static Image etirementContraste(Image image) throws Exception {
-        ByteImage img = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-        int gmin = min(image);
-        int gmax = max(image);
-
-        for (int x = 0; x < image.getXDim(); x++) {
-            for (int y = 0; y < image.getYDim(); y++) {
-                img.setPixelXYBByte(x, y, 0, f(image.getPixelXYBByte(x, y, 0), gmin, gmax));
-            }
-        }
-        return img;
-    }
-
-    /**
-     * Retourne la valeur min de l'image
-     *
-     * @param image l'image
-     * @return la valeur min
-     */
-    public static int min(Image image) {
-
-        int min = image.getPixelXYBByte(0, 0, 0);
-
-        for (int x = 0; x < image.getXDim(); x++) {
-            for (int y = 1; y <= image.getYDim(); y++) {
-                if (min > image.getPixelXYBByte(x, y - 1, 0)) min = image.getPixelXYBByte(x, y - 1, 0);
-            }
-        }
-        return min;
-    }
-
-    /**
-     * Retourne la valeur max de l'image
-     *
-     * @param image l'image
-     * @return la valeur max
-     */
-    public static int max(Image image) {
-        int max = image.getPixelXYBByte(0, 0, 0);
-        for (int x = 0; x < image.getXDim(); x++) {
-            for (int y = 1; y <= image.getYDim(); y++) {
-                if (max < image.getPixelXYBByte(x, y - 1, 0)) {
-                    max = image.getPixelXYBByte(x, y - 1, 0);
-                }
-            }
-        }
-        return max;
-    }
-
-    private static int f(int v, int gmin, int gmax) {
-        return (255 * (v - gmin)) / (gmax - gmin);
-    }
-
-    /**
      * Permet de calculer l'histogramme de l'image
      *
      * @param image
@@ -230,64 +133,15 @@ public class Main {
         return histo;
     }
 
-    /**
-     * Converti l'histogramme en chaine de caractères
-     *
-     * @param histo
-     * @return
-     */
-    public static String histoToString(double[] histo) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (double val :
-                histo) {
-            sb.append(val).append(",");
-        }
-        sb.append("]");
-        return sb.toString();
-    }
+    public static double[] getDividedHisto(double[] h) {
+        int nbBarres = h.length / 8;
+        double[] histo = new double[nbBarres];
 
-    /**
-     * Divise l'histogramme
-     *
-     * @param histo l'histogramme à modifier
-     * @return
-     */
-    public static double[] getDividedHisto(double[] histo) {
-        double dividedHisto[] = new double[histo.length / 10];
-        for (int i = 0; i < dividedHisto.length - 1; i = i + 10) {
-            // dividedHisto[i] = histo[i] + histo[i + 1];
-            for (int j = 0; j < 10; j++) {
-                dividedHisto[i] += histo[i + j];
-            }
+        for (int x = 0; x < histo.length; x++) {
+            histo[x] = h[x * 2] + h[(x * 2) + 1];
         }
-        return dividedHisto;
+        return histo;
     }
-
-    /**
-     * Cette fonction applique le filtre moyenneur sur l'image
-     *
-     * @param image l'image bruitée à traiter
-     * @return l'image traitée
-     */
-    public static Image moyenneur(Image image) {
-        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-        for (int x = 1; x < image.getXDim() - 1; x++) {
-            for (int y = 1; y < image.getYDim() - 1; y++) {
-                // calcul de la moyenne
-                int moyenne = 0;
-                for (int xx = -1; xx <= 1; xx++) {
-                    for (int yy = -1; yy <= 1; yy++) {
-                        moyenne += image.getPixelXYBByte(x + xx, y + yy, 0);
-                    }
-                }
-                moyenne /= 9;
-                // attribue le pixel dans la nouvelle image
-                new_image.setPixelXYBByte(x, y, 0, moyenne);
-            } // y for
-        } // x for
-        return new_image;
-    } // moyenneur
 
     /**
      * Applique le filtre médian sur une image
@@ -371,25 +225,6 @@ public class Main {
             return new_image;
         }
     } // median
-
-    public static Image contours(Image image) {
-        ByteImage new_image = new ByteImage(image.getXDim(), image.getYDim(), 1, 1, 1);
-        for (int x = 1; x < image.getXDim() - 1; x++) {
-            for (int y = 1; y < image.getYDim() - 1; y++) {
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y, 0) * -2);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y + 1, 0) * 0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y - 1, 0) * 0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y, 0) * 1);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y - 1, 0) * 1);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x - 1, y + 1, 0) * 0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y - 1, 0) * 0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x, y + 1, 0) * 0);
-                new_image.setPixelXYBByte(x, y, 0, image.getPixelXYBByte(x + 1, y, 0) * 0);
-            } // y for
-        } // x for
-        return new_image;
-    }
-
 
     /**
      * Calcule la distance des histogrammes entre l'image req et p2

@@ -2,6 +2,7 @@ package appli;
 
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
+import util.HSV;
 
 public class PictureIUT {
     Image img;
@@ -10,6 +11,9 @@ public class PictureIUT {
     double[] rouge;
     double[] vert;
     double[] bleu;
+    double[] h;
+    double[] s;
+    double[] v;
 
 
 
@@ -18,6 +22,7 @@ public class PictureIUT {
         this.path = path;
         this.img = ImageLoader.exec(path);
         initHisto();
+        initHSV();
     }
 
     public double[] getRouge() {
@@ -44,16 +49,32 @@ public class PictureIUT {
         this.bleu = bleu;
     }
 
-    public void setImg(Image img) {
-        this.img = img;
+    public double[] getH() {
+        return h;
+    }
+
+    public void setH(double[] h) {
+        this.h = h;
+    }
+
+    public double[] getS() {
+        return s;
+    }
+
+    public void setS(double[] s) {
+        this.s = s;
+    }
+
+    public double[] getV() {
+        return v;
+    }
+
+    public void setV(double[] v) {
+        this.v = v;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     /**
@@ -71,9 +92,12 @@ public class PictureIUT {
         return img;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void initHSV(){
+        h = HSV.getH(this.img);
+        s = HSV.getS(this.img);
+        v = HSV.getV(this.img);
     }
+
 
     @Override
     public String toString(){

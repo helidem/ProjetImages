@@ -37,18 +37,20 @@ public class JSONProduction {
             JSONArray jsonArray = new JSONArray();
             for (File image : directoryListing) {
                 Image pic = ImageLoader.exec(image.getPath());
-                pic = Main.median(pic);
+                System.out.println(image.getPath());
+                //pic = Main.median(pic);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("nom", image.getName());
                 double[] histogram1 = Main.normaliserHisto(Main.getHisto(pic, 0));
-                histogram1 = Main.getDividedHisto(histogram1);
+                //System.out.println(Arrays.toString(histogram1));
+                //histogram1 = Main.getDividedHisto(histogram1);
 
                 jsonObject.put("histogram1", Arrays.toString(histogram1));
                 if (pic.getBDim() > 2) { // si l'image est en couleur
                     double[] histogram2 = Main.normaliserHisto(Main.getHisto(pic, 1));
-                    histogram2 = Main.getDividedHisto(histogram2);
+                    //histogram2 = Main.getDividedHisto(histogram2);
                     double[] histogram3 = Main.normaliserHisto(Main.getHisto(pic, 2));
-                    histogram3 = Main.getDividedHisto(histogram3);
+                    //histogram3 = Main.getDividedHisto(histogram3);
                     jsonObject.put("histogram2", Arrays.toString(histogram2));
                     jsonObject.put("histogram3", Arrays.toString(histogram3));
                 }
