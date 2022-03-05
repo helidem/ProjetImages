@@ -2,8 +2,6 @@ package util;
 
 import appli.Main;
 import appli.PictureIUT;
-import fr.unistra.pelican.Image;
-import fr.unistra.pelican.algorithms.io.ImageLoader;
 import org.json.simple.JSONArray;
 
 import org.json.simple.JSONObject;
@@ -72,21 +70,14 @@ public class JSONProduction {
             for (File image : directoryListing) {
                 PictureIUT pic = new PictureIUT(image.getName(), image.getPath());
 
-                System.out.println(pic.getName());
-
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("nom", image.getName());
                 double[] histogram1 = pic.getH();
-
-
-                System.out.println(Arrays.toString(histogram1));
-                jsonObject.put("histogram1", Arrays.toString(histogram1));
-
                 double[] histogram2 = pic.getS();
                 double[] histogram3 = pic.getV();
+                jsonObject.put("histogram1", Arrays.toString(histogram1));
                 jsonObject.put("histogram2", Arrays.toString(histogram2));
                 jsonObject.put("histogram3", Arrays.toString(histogram3));
-
                 jsonArray.add(jsonObject);
             }
             file.write(jsonArray.toJSONString());
@@ -166,11 +157,9 @@ public class JSONProduction {
             double[] histogram1 = new double[360];
             for (String s : separatedDoublesHisto1) {
                 histogram1[cpt1] = Double.parseDouble(s);
-                // System.out.println(histogram1[cpt1]);
                 cpt1++;
             }
             pictureIUT.setH(histogram1);
-            // si l'image est en couleur :
 
             String[] separatedDoublesHisto2 = jsonObject.get("histogram2").toString().substring(1, jsonObject.get("histogram2").toString().length() - 1).split(",");
             int cpt2 = 0;
@@ -194,6 +183,4 @@ public class JSONProduction {
         }
         return listOfPictureIUT;
     }
-
-
 }

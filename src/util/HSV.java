@@ -1,6 +1,6 @@
 package util;
 
-import appli.Main;
+
 import appli.PictureIUT;
 import fr.unistra.pelican.Image;
 
@@ -87,7 +87,7 @@ public class HSV {
         return V;
     }
 
-    public static double distance(PictureIUT req, PictureIUT p2) {
+    public static double distanceHSV(PictureIUT req, PictureIUT p2) {
         double h = 0;
         double s = 0;
         double v = 0;
@@ -116,7 +116,7 @@ public class HSV {
             // .out.println("je teste : " + image.getName());
             PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
             image2 = traiterImage(image2);
-            double distance = distance(req, image2);
+            double distance = HSV.distanceHSV(req, image2);
             imageMap.put(distance, image.getName());
         }
     }
@@ -125,10 +125,9 @@ public class HSV {
 
         System.out.println("req : " + Arrays.toString(req.getRouge()));
         for (PictureIUT image : images) {
-            double distance = distance(req, image);
+            double distance = HSV.distanceHSV(req, image);
             imageMap.put(distance, image.getName());
         }
     }
-
 
 }
