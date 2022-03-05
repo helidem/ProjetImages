@@ -92,12 +92,15 @@ public class PictureIUT {
         return img;
     }
 
+    public void setImg(Image img) {
+        this.img = img;
+    }
+
     public void initHSV(){
         h = HSV.getH(this.img);
         s = HSV.getS(this.img);
         v = HSV.getV(this.img);
     }
-
 
     @Override
     public String toString(){

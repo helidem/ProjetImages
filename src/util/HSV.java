@@ -20,7 +20,7 @@ public class HSV {
         double maxc = Math.max(Math.max(r, g), b);
         double minc = Math.min(Math.min(r, g), b);
         double v = maxc;
-        //System.out.println(maxc + " " + minc);
+
         if (minc == maxc) {
             return new double[]{0.0, 0.0, v};
         }
@@ -32,23 +32,23 @@ public class HSV {
         double h;
         if (r == maxc) {
             h = 0.0 + bc - gc;
-            //System.out.println("1");
+
         } else if (g == maxc) {
             h = 2.0 + rc - bc;
-            ///System.out.println("2");
+
         } else {
             h = 4.0 + gc - rc;
-            //System.out.println("3");
+
         }
 
         h = (h / 6.0) % 1.0;
-        //System.out.println(h);
+
         if (h < 0) h += 1; // ne retourne pas le reste. il faut ajouter 1 si c'est negatif
         return new double[]{h * 360, s * 100, v * 100}; // avoir une valeur entre 0 et 100
     }
 
     public static double[] getH(Image image) {
-        double H[] = new double[361];
+        double H[] = new double[360];
         Arrays.fill(H, 0.0);
 
         for (int x = 0; x < image.getXDim(); x++) {
@@ -56,12 +56,12 @@ public class HSV {
                 H[(int) rgb_to_hsv(image.getPixelXYBByte(x, y, 0), image.getPixelXYBByte(x, y, 1), image.getPixelXYBByte(x, y, 2))[0]] += 1;
             }
         }
-        System.out.println(Arrays.toString(H));
+
         return H;
     }
 
     public static double[] getS(Image image) {
-        double S[] = new double[361];
+        double S[] = new double[101];
         Arrays.fill(S, 0.0);
 
         for (int x = 0; x < image.getXDim(); x++) {
@@ -74,7 +74,7 @@ public class HSV {
     }
 
     public static double[] getV(Image image) {
-        double V[] = new double[361];
+        double V[] = new double[101];
         Arrays.fill(V, 0.0);
 
         for (int x = 0; x < image.getXDim(); x++) {
