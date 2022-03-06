@@ -6,95 +6,52 @@ import fr.unistra.pelican.algorithms.io.ImageLoader;
 import fr.unistra.pelican.algorithms.visualisation.Viewer2D;
 import util.*;
 
-import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.lang.Math.pow;
 
 public class Main {
-    public static TreeMap<Double, String> imageMap = new TreeMap();
+    public static TreeMap<String, Double> imageMap = new TreeMap();
+    static LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
+
 
     public static void main(String[] args) throws Exception {
         PictureIUT test = new PictureIUT("047.jpg", "misc\\motos\\047.jpg");
-        JSONProduction.jsonEncodeHSV("misc/motos");
-        ArrayList<PictureIUT> motos = JSONProduction.jsonDecodeHSV("misc/outHSV.json");
-        HSV.rechercheHSV(test, motos);
+        JSONProduction.jsonEncodeRGB("misc/motos");
+        ArrayList<PictureIUT> motos = JSONProduction.jsonDecodeRGB("misc/out.json");
+        RGB.rechercheRGB(test, motos);
+        //HSV.recherche(test);
         //recherche(test);
+        imageMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
+
+
         afficherImages();
-        System.out.println(imageMap);
+        System.out.println(sortedMap);
         // System.out.println(Arrays.toString(test.getS()));
 
         //System.out.println(distance(traiterImage(test),motos.get(0)));
+        //System.out.println(distanceHSV(new PictureIUT("bleu","misc/formes/bleu.png"),new PictureIUT("noir", "misc/formes/noir.png") ));
 
 
     }
 
     private static void afficherImages() {
         int cpt = 0;
-        for (Map.Entry<Double, String> entry : imageMap.entrySet()) {
+        for (Map.Entry<String, Double> entry : sortedMap.entrySet()) {
             if (cpt == 10) {
                 break;
             }
-            Image image = ImageLoader.exec("misc/motos/" + entry.getValue());
+            Image image = ImageLoader.exec("misc/motos/" + entry.getKey());
             image.setColor(true);
             Viewer2D.exec(image, image.getName());
             cpt++;
         }
     }
 
-    public static PictureIUT traiterImage(PictureIUT image) {
-        image.setImg(median(image.getImg()));
-        if (image.getImg().getBDim() > 2) {
-            image.setBleu(normaliserHisto(image.getBleu()));
-            image.setVert(normaliserHisto(image.getVert()));
-            image.setBleu(getDividedHisto(image.getBleu()));
-            image.setVert(getDividedHisto(image.getVert()));
-        }
-        image.setRouge(normaliserHisto(image.getRouge()));
-        image.setRouge(getDividedHisto(image.getRouge()));
-
-        return image;
-    }
-
-
-    /**
-     * Recherche les images similaires dans le dossier de l'image
-     *
-     * @param req l'image en question
-     */
-    public static void recherche(PictureIUT req) {
-        req = traiterImage(req);
-
-       /* System.out.println(Arrays.toString(req.getRouge()));
-        System.out.println(Arrays.toString(req.getBleu()));
-        System.out.println(Arrays.toString(req.getVert()));*/
-        File dir = new File("misc\\motos");
-        File[] directoryListing = dir.listFiles();
-        for (File image : directoryListing) {
-            /*if (image.getName().equals(req.getName())) {
-                continue;
-            }*/
-            // .out.println("je teste : " + image.getName());
-            PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
-            image2 = traiterImage(image2);
-            double distance = distance(req, image2);
-            imageMap.put(distance, image.getName());
-        }
-    }
-
-    public static void recherche(PictureIUT req, ArrayList<PictureIUT> images) {
-        req = traiterImage(req);
-
-        System.out.println("req : " + Arrays.toString(req.getRouge()));
-        for (PictureIUT image : images) {
-            double distance = distance(req, image);
-            imageMap.put(distance, image.getName());
-        }
-    }
 
     /**
      * Permet de normaliser l'histogramme (pourcentage)
@@ -105,34 +62,14 @@ public class Main {
     public static double[] normaliserHisto(double[] histo) {
         double[] normal = new double[histo.length];
         int nbPixel = 0;
-        double pourcent = 0;
         for (double num : histo) {
             nbPixel += num;
         }
 
         for (int i = 0; i < histo.length; i++) {
             normal[i] = (histo[i] * 100) / nbPixel;
-            pourcent += normal[i];
         }
         return normal;
-    }
-
-    /**
-     * Permet de calculer l'histogramme de l'image
-     *
-     * @param image
-     * @return tableau représentant l'histogramme
-     */
-    public static double[] getHisto(Image image, int canal) {
-        double histo[] = new double[256];
-        Arrays.fill(histo, 0.0);
-
-        for (int x = 0; x < image.getXDim(); x++) {
-            for (int y = 0; y < image.getYDim(); y++) {
-                histo[image.getPixelXYBByte(x, y, canal)] += 1;
-            }
-        }
-        return histo;
     }
 
     public static double[] getDividedHisto(double[] h) {
@@ -228,28 +165,4 @@ public class Main {
         }
     } // median
 
-    /**
-     * Calcule la distance des histogrammes entre l'image req et p2
-     *
-     * @param req l'image en entrée
-     * @param p2  l'image avec laquelle on compare
-     * @return la distance des histogrammes
-     */
-    public static double distance(PictureIUT req, PictureIUT p2) {
-        double rouge = 0;
-        double vert = 0;
-        double bleu = 0;
-        if (req.getImg().getBDim() > 2 && p2.getImg().getBDim() > 2) {
-            for (int i = 0; i < req.getVert().length; i++) {
-                vert += pow(req.getVert()[i] - p2.getVert()[i], 2);
-            }
-            for (int i = 0; i < req.getBleu().length; i++) {
-                bleu += pow(req.getBleu()[i] - p2.getBleu()[i], 2);
-            }
-        }
-        for (int i = 0; i < req.getRouge().length; i++) {
-            rouge += pow(req.getRouge()[i] - p2.getRouge()[i], 2);
-        }
-        return Math.sqrt(rouge) + Math.sqrt(vert) + Math.sqrt(bleu);
-    }
 }

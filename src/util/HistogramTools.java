@@ -1,4 +1,5 @@
 package util;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +21,10 @@ public class HistogramTools {
      * @param histogram tableau représsentant l'histogramme
      * @throws IOException
      */
-    public static void plotHistogram(double [] histogram, Color couleur) throws IOException{
+    public static void plotHistogram(double[] histogram, Color couleur) throws IOException {
 
         XYSeries myseries = new XYSeries("Nombre de pixels");
-        for(int i=0;i<histogram.length;i++){
+        for (int i = 0; i < histogram.length; i++) {
             myseries.add(new Double(i), new Double(histogram[i]));
         }
         XYSeriesCollection myseriescollection = new XYSeriesCollection(myseries);
@@ -34,7 +35,7 @@ public class HistogramTools {
 
         xyplot.setBackgroundPaint(Color.lightGray);
         xyplot.setRangeGridlinePaint(Color.black);
-        xyplot.getRendererForDataset(xyplot.getDataset(0)).setSeriesPaint(0,couleur);
+        xyplot.getRendererForDataset(xyplot.getDataset(0)).setSeriesPaint(0, couleur);
         NumberAxis axis = (NumberAxis) xyplot.getDomainAxis();
 
         axis.setLowerMargin(0);
@@ -47,14 +48,14 @@ public class HistogramTools {
     }
 
     /**
-     * @param histogram tableau représsentant l'histogramme
+     * @param histogram  tableau représsentant l'histogramme
      * @param pathToSave chemin de sauvegarde de l'histogramme
      * @throws IOException
      */
-    public static void saveHistogram(double [] histogram, String pathToSave) throws IOException{
+    public static void saveHistogram(double[] histogram, String pathToSave) throws IOException {
 
         XYSeries myseries = new XYSeries("Nombre de pixels");
-        for(int i=0;i<histogram.length;i++){
+        for (int i = 0; i < histogram.length; i++) {
             myseries.add(new Double(i), new Double(histogram[i]));
         }
         XYSeriesCollection myseriescollection = new XYSeriesCollection(myseries);
@@ -71,7 +72,7 @@ public class HistogramTools {
         axis.setLowerMargin(0);
         axis.setUpperMargin(0);
 
-        if(pathToSave!=null)
+        if (pathToSave != null)
             ChartUtilities.saveChartAsPNG(new File(pathToSave), jfreechart, 900, 600);
     }
 

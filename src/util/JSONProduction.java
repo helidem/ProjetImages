@@ -33,15 +33,15 @@ public class JSONProduction {
             JSONArray jsonArray = new JSONArray();
             for (File image : directoryListing) {
                 PictureIUT pic = new PictureIUT(image.getName(), image.getPath());
-                pic = Main.traiterImage(pic);
-                System.out.println(pic.getName());
+                pic = RGB.traiterImageRGB(pic);
+
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("nom", image.getName());
                 double[] histogram1 = pic.getRouge();
 
 
-                System.out.println(Arrays.toString(histogram1));
+
                 jsonObject.put("histogram1", Arrays.toString(histogram1));
                 if (pic.getImg().getBDim() > 2) { // si l'image est en couleur
                     double[] histogram2 = pic.getVert();
@@ -110,7 +110,7 @@ public class JSONProduction {
             double[] histogram1 = new double[32];
             for (String s : separatedDoublesHisto1) {
                 histogram1[cpt1] = Double.parseDouble(s);
-                // System.out.println(histogram1[cpt1]);
+
                 cpt1++;
             }
             pictureIUT.setRouge(histogram1);

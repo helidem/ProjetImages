@@ -3,6 +3,7 @@ package appli;
 import fr.unistra.pelican.Image;
 import fr.unistra.pelican.algorithms.io.ImageLoader;
 import util.HSV;
+import util.RGB;
 
 public class PictureIUT {
     Image img;
@@ -82,10 +83,10 @@ public class PictureIUT {
      */
     public void initHisto() {
         if (img.getBDim() > 2) {
-            vert = Main.getHisto(this.img, 1);
-            bleu = Main.getHisto(this.img, 2);
+            vert = RGB.getHistoRGB(this.img, 1);
+            bleu = RGB.getHistoRGB(this.img, 2);
         }
-            rouge = Main.getHisto(this.img, 0);
+            rouge = RGB.getHistoRGB(this.img, 0);
     }
 
     public Image getImg() {

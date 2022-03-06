@@ -70,7 +70,6 @@ public class HSV {
                 S[(int) rgb_to_hsv(image.getPixelXYBByte(x, y, 0), image.getPixelXYBByte(x, y, 1), image.getPixelXYBByte(x, y, 2))[1]] += 1;
             }
         }
-
         return S;
     }
 
@@ -83,7 +82,6 @@ public class HSV {
                 V[(int) rgb_to_hsv(image.getPixelXYBByte(x, y, 0), image.getPixelXYBByte(x, y, 1), image.getPixelXYBByte(x, y, 2))[2]] += 1;
             }
         }
-
         return V;
     }
 
@@ -106,28 +104,25 @@ public class HSV {
     }
 
     public static void recherche(PictureIUT req) {
-        req = traiterImage(req);
+
         File dir = new File("misc\\motos");
         File[] directoryListing = dir.listFiles();
         for (File image : directoryListing) {
-            /*if (image.getName().equals(req.getName())) {
+            if (image.getName().equals(req.getName())) {
                 continue;
-            }*/
-            // .out.println("je teste : " + image.getName());
+            }
             PictureIUT image2 = new PictureIUT(image.getName(), image.getPath());
-            image2 = traiterImage(image2);
             double distance = HSV.distanceHSV(req, image2);
-            imageMap.put(distance, image.getName());
+            imageMap.put(image.getName(), distance);
         }
     }
 
     public static void rechercheHSV(PictureIUT req, ArrayList<PictureIUT> images) {
 
-        System.out.println("req : " + Arrays.toString(req.getRouge()));
+
         for (PictureIUT image : images) {
             double distance = HSV.distanceHSV(req, image);
-            imageMap.put(distance, image.getName());
+            imageMap.put(image.getName(), distance);
         }
     }
-
 }
