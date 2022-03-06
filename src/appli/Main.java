@@ -14,13 +14,14 @@ import static java.lang.Math.pow;
 public class Main {
     public static TreeMap<String, Double> imageMap = new TreeMap();
     static LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
+    public static String path = "misc/broad/";
 
 
     public static void main(String[] args) throws Exception {
-        PictureIUT test = new PictureIUT("047.jpg", "misc\\motos\\047.jpg");
-        JSONProduction.jsonEncodeRGB("misc/motos");
-        ArrayList<PictureIUT> motos = JSONProduction.jsonDecodeRGB("misc/out.json");
-        RGB.rechercheRGB(test, motos);
+        PictureIUT test = new PictureIUT("0448.png", path+"0448.png");
+        JSONProduction.jsonEncodeRGB(path);
+        ArrayList<PictureIUT> banque = JSONProduction.jsonDecodeRGB("misc/out.json");
+        RGB.rechercheRGB(test, banque);
         //HSV.recherche(test);
         //recherche(test);
         imageMap.entrySet()
@@ -33,7 +34,7 @@ public class Main {
         System.out.println(sortedMap);
         // System.out.println(Arrays.toString(test.getS()));
 
-        //System.out.println(distance(traiterImage(test),motos.get(0)));
+        //System.out.println(distance(traiterImage(test),banque.get(0)));
         //System.out.println(distanceHSV(new PictureIUT("bleu","misc/formes/bleu.png"),new PictureIUT("noir", "misc/formes/noir.png") ));
 
 
@@ -45,7 +46,7 @@ public class Main {
             if (cpt == 10) {
                 break;
             }
-            Image image = ImageLoader.exec("misc/motos/" + entry.getKey());
+            Image image = ImageLoader.exec(path + entry.getKey());
             image.setColor(true);
             Viewer2D.exec(image, image.getName());
             cpt++;

@@ -34,13 +34,9 @@ public class JSONProduction {
             for (File image : directoryListing) {
                 PictureIUT pic = new PictureIUT(image.getName(), image.getPath());
                 pic = RGB.traiterImageRGB(pic);
-
-
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("nom", image.getName());
                 double[] histogram1 = pic.getRouge();
-
-
 
                 jsonObject.put("histogram1", Arrays.toString(histogram1));
                 if (pic.getImg().getBDim() > 2) { // si l'image est en couleur
@@ -104,7 +100,7 @@ public class JSONProduction {
         ArrayList<PictureIUT> listOfPictureIUT = new ArrayList();
         for (Object object : array) {
             JSONObject jsonObject = (JSONObject) object;
-            PictureIUT pictureIUT = new PictureIUT((String) jsonObject.get("nom"), "misc/motos/" + (String) jsonObject.get("nom"));
+            PictureIUT pictureIUT = new PictureIUT((String) jsonObject.get("nom"), Main.path + (String) jsonObject.get("nom"));
             String[] separatedDoublesHisto1 = jsonObject.get("histogram1").toString().substring(1, jsonObject.get("histogram1").toString().length() - 1).split(",");
             int cpt1 = 0;
             double[] histogram1 = new double[32];

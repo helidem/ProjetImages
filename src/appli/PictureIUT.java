@@ -23,7 +23,7 @@ public class PictureIUT {
         this.path = path;
         this.img = ImageLoader.exec(path);
         initHisto();
-        initHSV();
+        //initHSV();
     }
 
     public double[] getRouge() {
